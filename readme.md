@@ -5,9 +5,8 @@
 A-MQ 6 installed at /opt/a-mq-6
 A-MQ 7 installed at /opt/a-mq-7
 
-unzip /opt/a-mq-6/extras/apache-activemq-${VERSION}.zip
- 
-ln -s /opt/a-mq-6/extras/apache-activemq-${VERSION}/activemq-all-${VERSION}.jar /opt/a-mq-6/activemq-all.jar
+  unzip /opt/a-mq-6/extras/apache-activemq-${VERSION}.zip
+  ln -s /opt/a-mq-6/extras/apache-activemq-${VERSION}/activemq-all-${VERSION}.jar /opt/a-mq-6/activemq-all.jar
 
 
 ## Security
@@ -57,10 +56,15 @@ Start broker
 Run different scenarios
 
 	java -jar /opt/a-mq-6/activemq-all.jar consumer activemq:consumer --user admin --password admin --destination TEST
+
 OK
-	java -jar /opt/a-mq-6/activemq-all.jar consumer activemq:consumer --user user --password user --destination TEST
+	
+  java -jar /opt/a-mq-6/activemq-all.jar consumer activemq:consumer --user user --password user --destination TEST
+
 Forbidden
-	java -jar /opt/a-mq-6/activemq-all.jar consumer activemq:consumer --user user --password user --destination USERS.TEST
+	
+  java -jar /opt/a-mq-6/activemq-all.jar consumer activemq:consumer --user user --password user --destination USERS.TEST
+
 OK
 
 
@@ -131,10 +135,15 @@ Start broker
 Run different scenarios
 
 	java -jar /opt/a-mq-6/activemq-all.jar consumer activemq:consumer --user admin --password admin --destination TEST
+
 OK
+
 	java -jar /opt/a-mq-6/activemq-all.jar consumer activemq:consumer --user user --password user --destination TEST
+
 Forbidden
+
 	java -jar /opt/a-mq-6/activemq-all.jar consumer activemq:consumer --user user --password user --destination USERS.TEST
+
 OK     
 
 
