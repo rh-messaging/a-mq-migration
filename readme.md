@@ -2,11 +2,11 @@
 
 ## Prerequisite
 
-A-MQ 6 installed at /opt/a-mq-6
-A-MQ 7 installed at /opt/a-mq-7
+A-MQ 6 installed at `/opt/a-mq-6`
+A-MQ 7 installed at `/opt/a-mq-7`
 
-  unzip /opt/a-mq-6/extras/apache-activemq-${VERSION}.zip
-  ln -s /opt/a-mq-6/extras/apache-activemq-${VERSION}/activemq-all-${VERSION}.jar /opt/a-mq-6/activemq-all.jar
+	unzip /opt/a-mq-6/extras/apache-activemq-${VERSION}.zip
+	ln -s /opt/a-mq-6/extras/apache-activemq-${VERSION}/activemq-all-${VERSION}.jar /opt/a-mq-6/activemq-all.jar
 
 
 ## Security
@@ -15,15 +15,15 @@ A-MQ 7 installed at /opt/a-mq-7
 
 #### A-MQ 6
 
-Example in security/basic/a-mq-6/
+Example in `security/basic/a-mq-6/`
 
-Define users in etc/users.properties
+Define users in `etc/users.properties`
 
 	admin=admin,admins,users,guests
 	user=user,users
 	guest=guest,guests
 
-Define authorization in etc/activemq.xml
+Define authorization in `etc/activemq.xml`
 
             <authorizationPlugin>
               <map>
@@ -59,33 +59,33 @@ Run different scenarios
 
 OK
 	
-  java -jar /opt/a-mq-6/activemq-all.jar consumer activemq:consumer --user user --password user --destination TEST
+	java -jar /opt/a-mq-6/activemq-all.jar consumer activemq:consumer --user user --password user --destination TEST
 
 Forbidden
 	
-  java -jar /opt/a-mq-6/activemq-all.jar consumer activemq:consumer --user user --password user --destination USERS.TEST
+	java -jar /opt/a-mq-6/activemq-all.jar consumer activemq:consumer --user user --password user --destination USERS.TEST
 
 OK
 
 
 ### A-MQ 7
 
-Example in security/basic/a-mq-7/
+Example in `security/basic/a-mq-7/`
 
 
-etc/artemis-users.properties
+Define users in `etc/artemis-users.properties`
 
 	admin=admin
 	user=user
 	guest=guest
 
-etc/artemis-roles.properties
+Define roles in `etc/artemis-roles.properties`
 
 	admins=admin
 	users=user,admin
 	guests=guest,admin
 
-etc/broker.xml	
+Configure authorization policies in `etc/broker.xml`	
 
       <security-settings>
          <security-setting match="jms.queue.#">
