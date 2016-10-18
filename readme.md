@@ -14,8 +14,8 @@ Suite installed in `/workspace/oss/a-mq-migration/`
 
 Topics:
 
-* [Basic Security](security/basic)
-* [Network Bridge](network)
+* [Securing Broker](security)
+* [Creating Network Bridge](network)
 
 
 
