@@ -2,7 +2,7 @@
 
 ### A-MQ 6
 
-Two brokers. One in a-mq-6/local/
+Two brokers. One in `a-mq-6/local/`
 
         <transportConnectors>
             <transportConnector name="openwire" uri="tcp://0.0.0.0:0?maximumConnections=1000"/>
@@ -12,7 +12,7 @@ Two brokers. One in a-mq-6/local/
             <networkConnector uri="static:(tcp://localhost:61617)" userName="admin" password="admin"/>
         </networkConnectors> 
 
-The other in a-mq-7/remote
+The other in `a-mq-7/remote`
 
         <transportConnectors>
             <transportConnector name="openwire" uri="tcp://0.0.0.0:61617?maximumConnections=1000"/>
@@ -47,7 +47,7 @@ Produce to other
 
 ### A-MQ 7
 
-Two brokers. One in a-mq-7/local
+Two brokers. One in `a-mq-7/local`
 
       <acceptors>
          <acceptor name="artemis">tcp://0.0.0.0:61616?tcpSendBufferSize=1048576;tcpReceiveBufferSize=1048576</acceptor>
@@ -75,7 +75,7 @@ Two brokers. One in a-mq-7/local
          </bridge>
       </bridges>
 
-The other in a-mq-7/remote
+The other in `a-mq-7/remote`
 
       <acceptors>
          <acceptor name="artemis">tcp://0.0.0.0:61617?tcpSendBufferSize=1048576;tcpReceiveBufferSize=1048576</acceptor>
