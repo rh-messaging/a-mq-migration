@@ -10,7 +10,12 @@ Openwire client for testing
 	unzip /opt/a-mq-6/extras/apache-activemq-${VERSION}.zip
 	ln -s /opt/a-mq-6/extras/apache-activemq-${VERSION}/activemq-all-${VERSION}.jar /opt/a-mq-6/activemq-all.jar
 
-Suite installed in /workspace/oss/a-mq-migration/
+Suite installed in `/workspace/oss/a-mq-migration/`
+
+Topics:
+
+* [Basic Security](security/basic)
+* [Network Bridge](network)
 
 
 
