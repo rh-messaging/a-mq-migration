@@ -38,11 +38,11 @@ and
 
 Subscribe to one broker
 
-java -jar /opt/a-mq-6/activemq-all.jar consumer --brokerUrl 'tcp://localhost:61617' --user admin --password admin --destination TEST
+	java -jar /opt/a-mq-6/activemq-all.jar consumer --brokerUrl 'tcp://localhost:61617' --user admin --password admin --destination TEST
 
 Produce to other
 
-java -jar /opt/a-mq-6/activemq-all.jar producer --brokerUrl 'tcp://localhost:61616' --user admin --password admin --destination TEST
+	java -jar /opt/a-mq-6/activemq-all.jar producer --brokerUrl 'tcp://localhost:61616' --user admin --password admin --destination TEST
 
 
 ### A-MQ 7
@@ -118,8 +118,8 @@ and
 
 Subscribe to one broker
 
-java -jar /opt/a-mq-6/activemq-all.jar consumer --brokerUrl 'tcp://localhost:61617' --user admin --password admin --destination TEST
+	java -jar /opt/a-mq-6/activemq-all.jar consumer --brokerUrl 'tcp://localhost:61617' --user admin --password admin --destination TEST
 
 Produce to other
 
-java -jar /opt/a-mq-6/activemq-all.jar producer --brokerUrl 'tcp://localhost:61616' --user admin --password admin --destination TEST      
+	java -jar /opt/a-mq-6/activemq-all.jar producer --brokerUrl 'tcp://localhost:61616' --user admin --password admin --destination TEST      
