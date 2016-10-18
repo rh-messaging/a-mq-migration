@@ -1,0 +1,144 @@
+<?xml version='1.0'?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<configuration xmlns="urn:activemq"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="urn:activemq /schema/artemis-configuration.xsd">
+
+   <jms xmlns="urn:activemq:jms">
+      <queue name="DLQ"/>
+      <queue name="ExpiryQueue"/>
+      <queue name="TEST"/>
+   </jms>
+
+   <core xmlns="urn:activemq:core">
+
+      <name>local</name>
+
+      <persistence-enabled>true</persistence-enabled>
+
+      <!-- this could be ASYNCIO or NIO
+       -->
+      <journal-type>NIO</journal-type>
+
+      <paging-directory>./data/paging</paging-directory>
+
+      <bindings-directory>./data/bindings</bindings-directory>
+
+      <journal-directory>./data/journal</journal-directory>
+
+      <large-messages-directory>./data/large-messages</large-messages-directory>
+
+      <journal-min-files>2</journal-min-files>
+
+      <journal-pool-files>-1</journal-pool-files>
+
+      <!--
+       This value was determined through a calculation.
+       Your system could perform 7.58 writes per millisecond
+       on the current journal configuration.
+       That translates as a sync write every 132000 nanoseconds
+      -->
+      <journal-buffer-timeout>132000</journal-buffer-timeout>
+
+
+      <!-- how often we are looking for how many bytes are being used on the disk in ms -->
+      <disk-scan-period>5000</disk-scan-period>
+
+      <acceptors>
+         <acceptor name="artemis">tcp://0.0.0.0:61616?tcpSendBufferSize=1048576;tcpReceiveBufferSize=1048576</acceptor>
+      </acceptors>
+
+      <connectors>
+         <connector name="remote-connector">tcp://localhost:61617</connector>
+      </connectors>
+
+      <queues>
+         <queue name="jms.queue.TEST">
+            <address>jms.queue.TEST</address>
+         </queue>
+      </queues>        
+
+      <bridges>
+         <bridge name="bridge">
+            <queue-name>jms.queue.TEST</queue-name>
+            <forwarding-address>jms.queue.TEST</forwarding-address>
+            <user>admin</user>
+            <password>admin</password>
+            <static-connectors>
+               <connector-ref>remote-connector</connector-ref>
+            </static-connectors>
+         </bridge>
+      </bridges>
+
+
+      <security-settings>
+         <security-setting match="jms.queue.#">
+            <permission type="createNonDurableQueue" roles="admins"/>
+            <permission type="deleteNonDurableQueue" roles="admins"/>
+            <permission type="createDurableQueue" roles="admins"/>
+            <permission type="deleteDurableQueue" roles="admins"/>
+            <permission type="consume" roles="admins"/>
+            <permission type="browse" roles="admins"/>
+            <permission type="send" roles="admins"/>
+            <!-- we need this otherwise ./artemis data imp wouldn't work -->
+            <permission type="manage" roles="admins"/>
+         </security-setting>
+
+         <security-setting match="jms.queue.USERS.#">
+            <permission type="createNonDurableQueue" roles="users"/>
+            <permission type="deleteNonDurableQueue" roles="users"/>
+            <permission type="createDurableQueue" roles="users"/>
+            <permission type="deleteDurableQueue" roles="users"/>
+            <permission type="consume" roles="users"/>
+            <permission type="browse" roles="users"/>
+            <permission type="send" roles="users"/>
+            <!-- we need this otherwise ./artemis data imp wouldn't work -->
+            <permission type="manage" roles="users"/>
+         </security-setting>         
+
+         <security-setting match="jms.queue.GUESTS.#">
+            <permission type="createNonDurableQueue" roles="guests"/>
+            <permission type="deleteNonDurableQueue" roles="guests"/>
+            <permission type="createDurableQueue" roles="guests"/>
+            <permission type="deleteDurableQueue" roles="guests"/>
+            <permission type="consume" roles="guests"/>
+            <permission type="browse" roles="guests"/>
+            <permission type="send" roles="guests"/>
+            <!-- we need this otherwise ./artemis data imp wouldn't work -->
+            <permission type="manage" roles="guests"/>
+         </security-setting>                  
+      </security-settings>
+
+      <address-settings>
+         <!--default for catch all-->
+         <address-setting match="#">
+            <dead-letter-address>jms.queue.DLQ</dead-letter-address>
+            <expiry-address>jms.queue.ExpiryQueue</expiry-address>
+            <redelivery-delay>0</redelivery-delay>
+            <!-- with -1 only the global-max-size is in use for limiting -->
+            <max-size-bytes>-1</max-size-bytes>
+            <message-counter-history-day-limit>10</message-counter-history-day-limit>
+            <address-full-policy>PAGE</address-full-policy>
+            <auto-create-jms-queues>true</auto-create-jms-queues>
+         </address-setting>
+      </address-settings>
+   </core>
+</configuration>
