@@ -1,0 +1,206 @@
+<!--
+
+  Details many of the common usages
+  - network connector
+  - some transport connector attributes
+  - SSL
+  - Various plugins
+  - Scheduler 
+  - mkahadb
+  - security
+  -->
+
+<beans
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:amq="http://activemq.apache.org/schema/core"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+    <!-- Allows us to use system properties and fabric as variables in this configuration file -->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="properties">
+            <bean class="io.fabric8.mq.fabric.ConfigurationProperties"/>
+        </property>
+    </bean>
+
+    
+    <broker xmlns="http://activemq.apache.org/schema/core" brokerName="MyBroker" dataDirectory="XXXX" start="false" restartAllowed="false" schedulePeriodForDestinationPurge="20000" schedulerSupport="true">
+
+        <destinationPolicy>
+            <policyMap>
+              <policyEntries>
+                <policyEntry topic=">" producerFlowControl="true">
+                  <pendingMessageLimitStrategy>
+                    <constantPendingMessageLimitStrategy limit="10"/>
+                  </pendingMessageLimitStrategy>
+                </policyEntry>
+                <policyEntry queue=">" producerFlowControl="true" memoryLimit="500mb" maxPageSize="200" gcInactiveDestinations="true" inactiveTimoutBeforeGC="60000" optimizedDispatch="true" >
+                  <pendingMessageLimitStrategy>
+                    <constantPendingMessageLimitStrategy limit="10"/>
+                  </pendingMessageLimitStrategy>
+                  <deadLetterStrategy>
+                    <individualDeadLetterStrategy queuePrefix="DLQ." useQueueForQueueMessages="true" />
+                  </deadLetterStrategy>
+                  <networkBridgeFilterFactory>
+                    <conditionalNetworkBridgeFilterFactory replayWhenNoConsumers="true"/>
+                  </networkBridgeFilterFactory>
+                </policyEntry>
+              </policyEntries>
+            </policyMap>
+        </destinationPolicy>
+
+        <managementContext>
+            <managementContext createConnector="false"/>
+        </managementContext>
+
+        <persistenceAdapter>
+          <mKahaDB directory="XXXX/kahadb">
+            <filteredPersistenceAdapters>
+              <filteredKahaDB queue="XXX.>">
+                <persistenceAdapter>
+                  <kahaDB
+                    journalMaxFileLength="64mb"
+                    concurrentStoreAndDispatchQueues="true"
+                    checksumJournalFiles="true"
+                    checkForCorruptJournalFiles="true"
+                    indexCacheSize="100000"
+                    indexWriteBatchSize="10000"
+                    preallocationStrategy="os_kernel_copy"
+                    enableJournalDiskSyncs="false"
+                  />
+                </persistenceAdapter>
+              </filteredKahaDB>
+              <filteredKahaDB queue="YYYY.>">
+                <persistenceAdapter>
+                  <kahaDB
+                    journalMaxFileLength="64mb"
+                    concurrentStoreAndDispatchQueues="true"
+                    checksumJournalFiles="true"
+                    checkForCorruptJournalFiles="true"
+                    indexCacheSize="100000"
+                    indexWriteBatchSize="10000"
+                    preallocationStrategy="os_kernel_copy"
+                    enableJournalDiskSyncs="false"
+                  />
+                </persistenceAdapter>
+              </filteredKahaDB>
+              <filteredKahaDB queue="ZZZ.>">
+                <persistenceAdapter>
+                  <kahaDB
+                    journalMaxFileLength="64mb"
+                    concurrentStoreAndDispatchQueues="true"
+                    checksumJournalFiles="true"
+                    checkForCorruptJournalFiles="true"
+                    indexCacheSize="100000"
+                    indexWriteBatchSize="10000"
+                    preallocationStrategy="os_kernel_copy"
+                    enableJournalDiskSyncs="false"
+                  />
+                </persistenceAdapter>
+              </filteredKahaDB>
+              <filteredKahaDB queue="AAA.>">
+                <persistenceAdapter>
+                  <kahaDB
+                    journalMaxFileLength="64mb"
+                    concurrentStoreAndDispatchQueues="true"
+                    checksumJournalFiles="true"
+                    checkForCorruptJournalFiles="true"
+                    indexCacheSize="100000"
+                    indexWriteBatchSize="10000"
+                    preallocationStrategy="os_kernel_copy"
+                    enableJournalDiskSyncs="false"
+                  />
+                </persistenceAdapter>
+              </filteredKahaDB>
+              <filteredKahaDB>
+                <persistenceAdapter>
+                  <kahaDB
+                    journalMaxFileLength="64mb"
+                    concurrentStoreAndDispatchQueues="true"
+                    checksumJournalFiles="true"
+                    checkForCorruptJournalFiles="true"
+                    indexCacheSize="100000"
+                    indexWriteBatchSize="10000"
+                    preallocationStrategy="os_kernel_copy"
+                    enableJournalDiskSyncs="false"
+                  />
+                </persistenceAdapter>
+              </filteredKahaDB>
+            </filteredPersistenceAdapters>
+          </mKahaDB>
+        </persistenceAdapter>
+
+        <plugins>
+            <timeStampingBrokerPlugin zeroExpirationOverride="129600000" futureOnly="true"/>
+            <jaasAuthenticationPlugin configuration="karaf" />
+            <redeliveryPlugin fallbackToDeadLetter="true" sendToDlqIfMaxRetriesExceeded="true">
+                <redeliveryPolicyMap>
+                    <redeliveryPolicyMap>
+                        <defaultEntry>
+                            <redeliveryPolicy maximumRedeliveries="3" initialRedeliveryDelay="1000" redeliveryDelay="4000" />
+                        </defaultEntry>
+                    </redeliveryPolicyMap>
+                </redeliveryPolicyMap>
+            </redeliveryPlugin>
+            <authorizationPlugin>
+              <map>
+                <authorizationMap groupClass="org.apache.karaf.jaas.boot.principal.RolePrincipal">
+                 
+                  <authorizationEntries>
+                    <authorizationEntry queue=">" read="writer,manager,viewer,Operator,Maintainer,Deployer,Auditor,Administrator,SuperUser,admin" write="writer,manager,Operator,Maintainer,Deployer,Auditor,Administrator,SuperUser,admin" admin="manager,Operator,Maintainer,Deployer,Auditor,Administrator,SuperUser,admin"/>
+                    <authorizationEntry topic=">" read="writer,manager,viewer,Operator,Maintainer,Deployer,Auditor,Administrator,SuperUser,admin" write="writer,manager,Operator,Maintainer,Deployer,Auditor,Administrator,SuperUser,admin" admin="manager,Operator,Maintainer,Deployer,Auditor,Administrator,SuperUser,admin"/>
+                    <authorizationEntry topic="ActiveMQ.Advisory.>" read="writer,manager,viewer,Operator,Maintainer,Deployer,Auditor,Administrator,SuperUser,admin,User" write="writer,manager,viewer,Operator,Maintainer,Deployer,Auditor,Administrator,SuperUser,admin,User" admin="writer,manager,viewer,Operator,Maintainer,Deployer,Auditor,Administrator,SuperUser,admin,User" />
+                  </authorizationEntries>
+                  <tempDestinationAuthorizationEntry>
+                    <tempDestinationAuthorizationEntry read="writer,manager,viewer,Operator,Maintainer,Deployer,Auditor,Administrator,SuperUser,admin" write="writer,manager,Operator,Maintainer,Deployer,Auditor,Administrator,SuperUser,admin" admin="writer,manager,Operator,Maintainer,Deployer,Auditor,Administrator,SuperUser,admin"/>
+                  </tempDestinationAuthorizationEntry>
+                </authorizationMap>
+              </map>
+            </authorizationPlugin>
+        </plugins>
+
+        <systemUsage>
+            <systemUsage>
+                <memoryUsage>
+                    <memoryUsage percentOfJvmHeap="70"/>
+                </memoryUsage>
+                <storeUsage>
+                    <storeUsage limit="480 gb"/>
+                </storeUsage>
+                <tempUsage>
+                    <tempUsage limit="5 gb"/>
+                </tempUsage>
+            </systemUsage>
+        </systemUsage>
+
+        <sslContext>
+          <sslContext
+            keyStore="XXXX/keystore/broker.ks"
+            keyStorePassword="password"
+            trustStore="XXX/keystore/broker.ts"
+            trustStorePassword="password"
+          />
+        </sslContext>
+
+        <transportConnectors>
+            <transportConnector name="openwire" uri="nio://0.0.0.0:XXXX?maximumConnections=10000&amp;soTimeout=120000&amp;allowLinkStealing=true"/>
+            <transportConnector name="ssl" uri="nio+ssl://0.0.0.0:XXXX?needClientAuth=true&amp;transport.enabledProtocols=TLSv1,TLSv1.1,TLSv1.2&amp;maximumConnections=10000&amp;soTimeout=120000&amp;allowLinkStealing=true"/>
+        </transportConnectors>
+
+        <networkConnectors>
+            <networkConnector
+                name="XXXX"
+                userName="XXXX"
+                password="XXXX"
+                uri="static:(nio://ip:61616,nio://ip:61616)"
+                messageTTL="2"
+                prefetchSize="1"
+                dynamicOnly="true"
+            />
+
+        </networkConnectors>
+
+    </broker>
+
+</beans>

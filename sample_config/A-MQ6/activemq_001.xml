@@ -1,0 +1,69 @@
+<!--
+Demonstrates using a JDBC persistence adapter
+-->
+
+
+<beans
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:context="http://www.springframework.org/schema/context"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd
+  http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:property-placeholder location="${properties.url}"/>
+	
+    <broker brokerName="myBroker1" useJmx="true" advisorySupport="true" schedulerSupport="false"
+            useShutdownHook="true" xmlns="http://activemq.apache.org/schema/core">
+        <destinationPolicy>
+            <policyMap>
+                <policyEntries>
+                    <policyEntry queue=">" producerFlowControl="false" useCache="true" prioritizedMessages="true"/>
+                </policyEntries>
+            </policyMap>
+        </destinationPolicy>
+
+        <managementContext>
+            <managementContext connectorPort="XXX"/>
+        </managementContext>
+
+        <persistenceAdapter>
+            <jdbcPersistenceAdapter maxProducersToAudit="60000"
+                                    auditRecoveryDepth="60000"
+                                    dataSource="#brokerDataSource">
+            </jdbcPersistenceAdapter>
+        </persistenceAdapter>
+
+
+        <systemUsage>
+            <systemUsage>
+                <memoryUsage>
+                    <memoryUsage limit="2667mb"/>
+                </memoryUsage>
+            </systemUsage>
+        </systemUsage>
+
+        <transportConnectors>
+            <transportConnector uri="XXXX"/>
+        </transportConnectors>
+       
+    </broker>
+
+    <bean id="brokerDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="driverClass" value="oracle.jdbc.pool.OracleDataSource"/>
+        <property name="jdbcUrl" value="XXX"/>
+        <property name="user" value="XXX"/>
+        <property name="password" value="XXX"/>
+        <property name="minPoolSize" value="10"/>
+        <property name="maxPoolSize" value="20"/>
+        <property name="maxIdleTime" value="20"/>
+        <property name="maxIdleTimeExcessConnections" value="300"/>
+        <property name="initialPoolSize" value="10"/>
+        <property name="testConnectionOnCheckout" value="false"/>
+        <property name="idleConnectionTestPeriod" value="60"/>
+        <property name="preferredTestQuery" value="select 1 from dual"/>
+        <property name="acquireRetryAttempts" value="0"/>
+        <property name="acquireRetryDelay" value="10000"/>
+        <property name="breakAfterAcquireFailure" value="false"/>
+    </bean>
+</beans>

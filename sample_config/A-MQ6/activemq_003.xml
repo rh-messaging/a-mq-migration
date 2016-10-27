@@ -1,0 +1,125 @@
+<!--
+  demonstrates using virtual destinations
+  -->
+
+<beans
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:amq="http://activemq.apache.org/schema/core"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+    <!-- Allows us to use system properties and fabric as variables in this configuration file -->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="properties">
+            <bean class="org.fusesource.mq.fabric.ConfigurationProperties"/>
+        </property>      
+    </bean>
+
+    <broker xmlns="http://activemq.apache.org/schema/core"
+            brokerName="${broker-name}"
+            dataDirectory="${data}"
+            start="false" restartAllowed="false">
+
+       <destinations>
+                <topic physicalName="VirtualTopic.TopicAAA"/>
+                <topic physicalName="VirtualTopic.TopicBBB"/>
+                <topic physicalName="VirtualTopic.TopicCCC"/>
+                <topic physicalName="VirtualTopic.TopicDDD"/>
+                <topic physicalName="VirtualTopic.TopicEEE"/>
+                <topic physicalName="VirtualTopic.TopicFFF"/>
+                <topic physicalName="VirtualTopic.TopicGGG"/>
+                <queue physicalName="Consumer.blue.VirtualTopic.TopicAAA"/>
+                <queue physicalName="Consumer.green.VirtualTopic.TopicAAA"/>
+                <queue physicalName="Consumer.peach0001.VirtualTopic.TopicAAA"/>
+                <queue physicalName="Consumer.peach0002.VirtualTopic.TopicAAA"/>
+                <queue physicalName="Consumer.peach0003.VirtualTopic.TopicAAA"/>
+                <queue physicalName="Consumer.peach0004.VirtualTopic.TopicAAA"/>
+                <queue physicalName="Consumer.peach0005.VirtualTopic.TopicAAA"/>
+                <queue physicalName="Consumer.peach0006.VirtualTopic.TopicAAA"/>
+                <queue physicalName="Consumer.peach0007.VirtualTopic.TopicAAA"/>
+                <queue physicalName="Consumer.peach0008.VirtualTopic.TopicAAA"/>
+        </destinations>
+
+
+        <destinationPolicy>
+            <policyMap>
+              <policyEntries>
+                <policyEntry topic=">" producerFlowControl="true">
+                  <pendingMessageLimitStrategy>
+                    <constantPendingMessageLimitStrategy limit="1000"/>
+                  </pendingMessageLimitStrategy>
+                  <deadLetterStrategy>
+                    <sharedDeadLetterStrategy processExpired="false"/>
+                  </deadLetterStrategy>
+                </policyEntry>
+                <policyEntry queue=">" producerFlowControl="true">
+                 <deadLetterStrategy>
+                   <sharedDeadLetterStrategy processExpired="false"/>
+                 </deadLetterStrategy>
+                </policyEntry>
+              </policyEntries>
+            </policyMap>
+        </destinationPolicy>
+ 
+        <managementContext>
+            <managementContext createConnector="false"/>
+        </managementContext>
+
+        <persistenceAdapter>
+            <kahaDB directory="${data}/kahadb"/>
+        </persistenceAdapter>
+
+        <plugins>
+            <jaasAuthenticationPlugin configuration="karaf" />
+        </plugins>
+
+        <systemUsage>
+            <systemUsage>
+                <memoryUsage>
+                    <memoryUsage limit="8gb"/>
+                </memoryUsage>
+                <storeUsage>
+                    <storeUsage limit="100 gb"/>
+                </storeUsage>
+                <tempUsage>
+                    <tempUsage limit="15 gb"/>
+                </tempUsage>
+            </systemUsage>
+        </systemUsage>
+        
+        <transportConnectors>
+            <transportConnector name="openwire" uri="tcp://0.0.0.0:0?maximumConnections=1000"/>
+        </transportConnectors>
+
+        <destinationInterceptors>
+                <virtualDestinationInterceptor>
+                        <virtualDestinations>
+                                <compositeTopic name="VirtualTopic.TopicAAA" forwardOnly="false">
+                                    <forwardTo>
+                                        <filteredDestination queue="Consumer.blue.VirtualTopic.TopicAAA" selector="JMSType = 'blue'" />
+                                        <filteredDestination queue="Consumer.green.VirtualTopic.TopicAAA" selector="JMSType = 'green'" />
+                                        <queue physicalName="Consumer.peach0001.VirtualTopic.TopicAAA"/>
+                                        <queue physicalName="Consumer.peach0002.VirtualTopic.TopicAAA"/>
+                                        <queue physicalName="Consumer.peach0003.VirtualTopic.TopicAAA"/>
+                                        <queue physicalName="Consumer.peach0004.VirtualTopic.TopicAAA"/>
+                                        <queue physicalName="Consumer.peach0005.VirtualTopic.TopicAAA"/>
+                                        <queue physicalName="Consumer.peach0006.VirtualTopic.TopicAAA"/>
+                                        <queue physicalName="Consumer.peach0007.VirtualTopic.TopicAAA"/>
+                                        <queue physicalName="Consumer.peach0008.VirtualTopic.TopicAAA"/>
+                                    </forwardTo>
+                                </compositeTopic>
+                           <virtualTopic name="VirtualTopic.TopicBBB"/>
+                           <virtualTopic name="VirtualTopic.TopicCCC"/>
+                           <virtualTopic name="VirtualTopic.TopicDDD"/>
+                           <virtualTopic name="VirtualTopic.TopicEEE"/>
+                           <virtualTopic name="VirtualTopic.TopicFFF"/>
+                           <virtualTopic name="VirtualTopic.TopicGGG"/>
+                        </virtualDestinations>
+                </virtualDestinationInterceptor>
+        </destinationInterceptors>
+
+
+    </broker>
+
+</beans>
