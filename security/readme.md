@@ -44,6 +44,7 @@ Start broker
 
 Run different scenarios
 
+	java -jar /opt/a-mq-6/activemq-all.jar producer --user admin --password admin --destination TEST
 	java -jar /opt/a-mq-6/activemq-all.jar consumer --user admin --password admin --destination TEST
 
 OK
