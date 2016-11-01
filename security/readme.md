@@ -39,8 +39,9 @@ Test
 
 Start broker
 
-	cd security/basic/a-mq-6
-	bin/start
+	export KARAF_ETC=/workspace/oss/a-mq-migration/security/basic/a-mq-6/etc
+	cd /opt/a-mq-6/
+	bin/amq
 
 Run different scenarios
 
