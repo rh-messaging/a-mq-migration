@@ -19,7 +19,7 @@
 ################################################################################
 
 KARAF_HOME=/opt/a-mq-6
-KARAF_NAME=/workspace/oss/amq-migration/security/basic/a-mq-6
+KARAF_NAME=/workspace/oss/a-mq-migration/security/basic/a-mq-6
 
 exec ${KARAF_HOME}/bin/admin stop ${KARAF_NAME} "$@"
 

@@ -19,7 +19,7 @@
 ################################################################################
 
 KARAF_HOME=/opt/a-mq-6
-KARAF_BASE=/workspace/oss/amq-migration/security/basic/a-mq-6
+KARAF_BASE=/workspace/oss/a-mq-migration/security/basic/a-mq-6
 
 export KARAF_BASE
 exec ${KARAF_HOME}/bin/karaf "$*"
