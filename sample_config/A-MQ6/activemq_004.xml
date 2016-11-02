@@ -1,0 +1,160 @@
+<!--
+  demonstrates some more broker attributes and more destination policies
+  demonstrates temp storage configuration
+-->
+<beans
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:amq="http://activemq.apache.org/schema/core"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://activemq.apache.org/schema/core      http://activemq.apache.org/schema/core/activemq-core.xsd
+    http://camel.apache.org/schema/spring       http://camel.apache.org/schema/spring/camel-spring.xsd
+    http://cern.ch/schema/MIG                   file:///usr/share/oat-activemq-patches/schema/MIG.xsd
+  ">
+
+  <broker
+    advisorySupport="false"
+    brokerId="XXXXX"
+    brokerName="XXXXX"
+    dataDirectory="XXX/data"
+    mbeanInvocationTimeout="600000"
+    offlineDurableSubscriberTimeout="300000"
+    populateJMSXUserID="true"
+    rejectDurableConsumers="true"
+    start="false"
+    useJmx="true"
+    xmlns="http://activemq.apache.org/schema/core"
+  >
+
+    <!-- destination configuration -->
+    <destinationInterceptors>
+      <virtualDestinationInterceptor>
+        <virtualDestinations>
+          <virtualTopic name="&gt;" prefix="Consumer.*."/>
+        </virtualDestinations>
+      </virtualDestinationInterceptor>
+    </destinationInterceptors>
+
+    <!-- destination policies -->
+    <destinationPolicy>
+      <policyMap>
+        <policyEntries>
+          <policyEntry memoryLimit="1gb" minimumMessageSize="3072" producerFlowControl="false" topic="&gt;" topicPrefetch="563"/>
+          <policyEntry lazyDispatch="false" memoryLimit="1gb" minimumMessageSize="3072" optimizedDispatch="true" producerFlowControl="false" queue="&gt;" queuePrefetch="563"/>
+          <policyEntry queue="ActiveMQ.DLQ">
+            <deadLetterStrategy>
+              <individualDeadLetterStrategy processExpired="false"/>
+            </deadLetterStrategy>
+          </policyEntry>
+        </policyEntries>
+      </policyMap>
+    </destinationPolicy>
+
+	<!-- PFOX commented out/removed this for now -->
+    <!--managementContext>
+      <managementContext allowRemoteAddressInMBeanNames="false" connectorHost="0.0.0.0" connectorPort="60002" createConnector="true" rmiServerPort="60003">
+        <property name="environment" xmlns="http://www.springframework.org/schema/beans">
+          <map xmlns="http://www.springframework.org/schema/beans">
+            <entry key="jmx.remote.x.password.file" value="XXXX" xmlns="http://www.springframework.org/schema/beans"/>
+            <entry key="jmx.remote.x.access.file" value="XXXX" xmlns="http://www.springframework.org/schema/beans"/>
+          </map>
+        </property>
+      </managementContext>
+    </managementContext--->
+
+    <persistenceAdapter>
+      <kahaDB
+        checkForCorruptJournalFiles="true"
+        checksumJournalFiles="true"
+        cleanupInterval="300000"
+        directory="/XXX/data/kahadb"
+        enableJournalDiskSyncs="false"
+        indexCacheSize="56623"
+        indexDirectory="/XXX/data/kahadb"
+        indexWriteBatchSize="10000"
+      />
+    </persistenceAdapter>
+
+    <plugins>
+      <!-- access control -->
+      <authorizationPlugin>
+        <map>
+          <authorizationMap>
+            <authorizationEntries>
+              <!-- administrators can do anything -->
+              <authorizationEntry admin="administrators" queue="&gt;" read="administrators" write="administrators"/>
+              <authorizationEntry admin="administrators" read="administrators" topic="&gt;" write="administrators"/>
+              <!-- authorization entries for anybody -->
+              <authorizationEntry admin="*" read="*" topic="ActiveMQ.Advisory.&gt;" write="*"/>
+              <!-- authorization entries for role_1 -->
+              <authorizationEntry admin="role_1" queue="ActiveMQ.DLQ" read="role_1" write="role_1"/>
+              <!-- authorization entries for role_2 -->
+              <authorizationEntry admin="role_2" queue="queue.test.&gt;" read="role_2" write="role_2"/>
+              <authorizationEntry admin="role_2" read="role_2" topic="queue.test.&gt;" write="role_2"/>
+              <!-- authorization entries for role_3 -->
+              <authorizationEntry admin="role_3" read="role_3" topic="topic.one" write="role_3"/>
+              <authorizationEntry admin="role_3" read="role_3" topic="topic.two" write="role_3"/>
+              <authorizationEntry admin="role_3" read="role_3" topic="topic.three" write="role_3"/>
+              <!-- authorization entries for role_4 -->
+              <authorizationEntry admin="role_4" topic="topic.one" write="role_4"/>
+              <authorizationEntry admin="role_4" topic="topic.two" write="role_4"/>
+              <authorizationEntry admin="role_4" topic="topic.three" write="role_4"/>
+              <!-- authorization entries for role_5 -->
+              <authorizationEntry admin="role_5" read="role_5" topic="topic.four" write="role_5"/>
+              <authorizationEntry admin="role_5" read="role_5" topic="topic.five" write="role_5"/>
+              <!-- authorization entries for role_6 -->
+              <authorizationEntry admin="role_6" topic="topic.four" write="role_6"/>
+              <authorizationEntry admin="role_6" topic="topic.five" write="role_6"/>
+            </authorizationEntries>
+          </authorizationMap>
+        </map>
+      </authorizationPlugin>
+      <!-- enable dual authentication via the corresponding plugin -->
+      <jaasDualAuthenticationPlugin configuration="activemq-domain" sslConfiguration="activemq-ssl-domain"/>
+      <!-- enable configuration reloading -->
+      <runtimeConfigurationPlugin checkPeriod="60000"/>
+      <!-- enforce a maximum time-to-live -->
+      <timeStampingBrokerPlugin ttlCeiling="604800000" zeroExpirationOverride="604800000"/>
+    </plugins>
+
+    <sslContext>
+      <sslContext
+        keyStore="/XXX/etc/broker.ks"
+        keyStorePassword="XXX"
+        trustStore="/XXX/etc/broker.ts"
+        trustStorePassword="XXXX"
+      />
+    </sslContext>
+
+    <systemUsage>
+      <systemUsage sendFailIfNoSpace="true">
+        <memoryUsage>
+          <memoryUsage limit="4915mb"/>
+        </memoryUsage>
+        <storeUsage>
+          <storeUsage limit="409600mb"/>
+        </storeUsage>
+        <tempUsage>
+          <tempUsage limit="204800mb"/>
+        </tempUsage>
+      </systemUsage>
+    </systemUsage>
+
+    <tempDataStore>
+      <pListStoreImpl directory="XXXX/data/tempdb" indexDirectory="/XXXX/data/tempdb"/>
+    </tempDataStore>
+
+    <transportConnectors>
+      <transportConnector name="stomp" uri="stomp+nio://0.0.0.0:XXXX?transport.closeAsync=false&amp;transport.defaultHeartBeat=3600000,0&amp;transport.hbGracePeriodMultiplier=1.5&amp;transport.keepAlive=true&amp;transport.soLinger=1"/>
+      <transportConnector name="stomp+ssl" uri="stomp+ssl://0.0.0.0:XXXX?transport.closeAsync=false&amp;transport.defaultHeartBeat=3600000,0&amp;transport.enabledProtocols=TLSv1,TLSv1.1,TLSv1.2&amp;transport.hbGracePeriodMultiplier=1.5&amp;transport.keepAlive=true&amp;transport.needClientAuth=true&amp;transport.soLinger=1"/>
+      <transportConnector name="websocket" uri="ws://0.0.0.0:XXXXX"/>
+      <transportConnector name="websocket+ssl" uri="wss://0.0.0.0:XXXXX?transport.enabledProtocols=TLSv1,TLSv1.1,TLSv1.2&amp;transport.needClientAuth=true"/>
+    </transportConnectors>
+
+  </broker>
+
+  <!-- enable the web console and jmx4perl -->
+  <import resource="jetty.xml"/>
+
+</beans>
