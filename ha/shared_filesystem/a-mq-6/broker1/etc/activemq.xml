@@ -53,7 +53,15 @@
         <persistenceAdapter>
             <kahaDB directory="${shared-kahadb}"/>
         </persistenceAdapter>
-
+		
+		<persistenceAdapter>
+		  <kahaDB directory="${shared-kahadb}" lockKeepAlivePeriod="5000">
+		    <locker>
+			  <shared-file-locker lockAcquireSleepInterval="10000"/>
+		      </locker>
+		  </kahaDB>
+		</persistenceAdapter>
+		 
         <plugins>
             <jaasAuthenticationPlugin configuration="karaf" />
             <authorizationPlugin>
