@@ -124,7 +124,8 @@ enable-3x-aliases = {
 
     echo "Karaf 3.x aliases enabled"
 
-}//
+}
+//
 //  Copyright 2005-2014 Red Hat, Inc.
 //
 //  Red Hat licenses this file to you under the Apache License, version
@@ -151,13 +152,13 @@ wait-for-command-fast = {
   sleep -s 1;
 }
 
-if { "true" equals ${ensemble.auto.start} } {
-  // bin/fabric8 mode
-  echo "Waiting for Fabric8 ..."; 
-  wait-for-service "io.fabric8.api.FabricService";
-  wait-for-command fabric wait-for-provisioning;
-  fabric:wait-for-provisioning;
-}
+// if { "true" equals ${ensemble.auto.start} } {
+//   // bin/fabric8 mode
+//   echo "Waiting for Fabric8 ..."; 
+//   wait-for-service "io.fabric8.api.FabricService";
+//   wait-for-command fabric wait-for-provisioning;
+//   fabric:wait-for-provisioning;
+// }
 
 // Disable welcome message (ENTESB-2323)
 //wait-for-command-fast fabric welcome;
@@ -177,4 +178,4 @@ if { "true" equals ${ensemble.auto.start} } {
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-shell:if { dev:wait-for-service --timeout 10 "(&(objectClass=org.apache.felix.service.command.Function)(osgi.command.scope=amq)(osgi.command.function=check-for-user))" } { amq:check-for-user }
+// shell:if { dev:wait-for-service --timeout 10 "(&(objectClass=org.apache.felix.service.command.Function)(osgi.command.scope=amq)(osgi.command.function=check-for-user))" } { amq:check-for-user }
