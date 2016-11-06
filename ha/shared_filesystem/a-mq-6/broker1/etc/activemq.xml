@@ -50,10 +50,7 @@
         </managementContext>
 
 
-        <persistenceAdapter>
-            <kahaDB directory="${shared-kahadb}"/>
-        </persistenceAdapter>
-		
+        
 		<persistenceAdapter>
 		  <kahaDB directory="${shared-kahadb}" lockKeepAlivePeriod="5000">
 		    <locker>
