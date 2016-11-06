@@ -27,14 +27,21 @@ Test
 
 Start two brokers
 
-	cd a-mq-6/local
-	bin/start
+
+	export KARAF_ETC=/workspace/oss/a-mq-migration/network/a-mq-6/local/etc
+	export KARAF_DATA=/workspace/oss/a-mq-migration/network/a-mq-6/local/data
+	mkdir /workspace/oss/a-mq-migration/network/a-mq-6/local/data
+	cd /opt/a-mq-6/
+	bin/amq
+
 
 and
 
-	cd a-mq-6/remote
-	bin/start
-
+	export KARAF_ETC=/workspace/oss/a-mq-migration/network/a-mq-6/remote/etc
+	export KARAF_DATA=/workspace/oss/a-mq-migration/network/a-mq-6/remote/data
+	mkdir /workspace/oss/a-mq-migration/network/a-mq-6/remote/data
+	cd /opt/a-mq-6/
+	bin/amq
 
 Subscribe to one broker
 
