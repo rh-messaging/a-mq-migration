@@ -45,16 +45,14 @@
             </policyMap>
         </destinationPolicy>
 
-        <networkConnectors>
-            <networkConnector uri="static:(tcp://localhost:61616)" userName="admin" password="admin"/>
-        </networkConnectors>        
+               
 
         <managementContext>
             <managementContext createConnector="false"/>
         </managementContext>
 
         <persistenceAdapter>
-            <kahaDB directory="${data}/kahadb"/>
+            <kahaDB directory="${shared-kahadb}"/>
         </persistenceAdapter>
 
         <plugins>
@@ -95,7 +93,7 @@
         </systemUsage>
 
         <transportConnectors>
-            <transportConnector name="openwire" uri="tcp://0.0.0.0:61617?maximumConnections=1000"/>
+            <transportConnector name="openwire" uri="tcp://0.0.0.0:0?maximumConnections=1000"/>
         </transportConnectors>
     </broker>
 
