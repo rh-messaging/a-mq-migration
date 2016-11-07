@@ -3,6 +3,18 @@
 
 ##How to run
 
+to start broker1 (master)
+	
+	cd /broker1/bin
+	./artemis run
+
+to start broker2 (slave)
+	
+	cd /broker2/bin
+	./artemis run
+
+
+
 
 ##How was it Setup:
 
