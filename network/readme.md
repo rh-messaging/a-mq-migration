@@ -40,7 +40,7 @@ and
 	export KARAF_ETC=/workspace/oss/a-mq-migration/network/a-mq-6/remote/etc
 	export KARAF_DATA=/workspace/oss/a-mq-migration/network/a-mq-6/remote/data
 	mkdir /workspace/oss/a-mq-migration/network/a-mq-6/remote/data
-	cd /opt/a-mq-6/
+	cd /opt/a-mq-6_dist2/
 	bin/amq
 
 Subscribe to one broker

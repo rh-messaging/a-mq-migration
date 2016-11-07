@@ -26,7 +26,7 @@ Start broker2
 	export KARAF_ETC=/workspace/oss/a-mq-migration/ha/shared_filesystem/a-mq-6/broker2/etc
 	export KARAF_DATA=/workspace/oss/a-mq-migration/ha/shared_filesystem/a-mq-6/broker2/data
 	mkdir /workspace/oss/a-mq-migration/ha/shared_filesystem/a-mq-6/broker2/data
-	cd /opt/a-mq-6/
+	cd /opt/a-mq-6_dist2/
 	bin/amq
 	
 broker1 will start as master and broker2 will be slave - it is waiting to get lock on kahadb
