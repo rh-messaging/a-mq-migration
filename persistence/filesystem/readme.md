@@ -29,4 +29,3 @@ Questions:
 
 - does A-MQ7 offer something similar to mkahadb
 - what file systems (particularly network shared filesystems) is A-MQ7 supported on?
-- 
