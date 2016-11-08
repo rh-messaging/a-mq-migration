@@ -1,7 +1,7 @@
-A-MQ 6 Kahadb
+##A-MQ 6 Kahadb
 
 
-Start two brokers, broker1 and broker2 . Point both broker at same kahadb directory.
+Start two brokers, broker1 and broker2. Point both broker at same kahadb directory.
 
 
 		<persistenceAdapter>
@@ -53,7 +53,7 @@ Second message should reach consumer - OK
 
 
 
-TODO:
+##TODO:
 
 - setup A-MQ7 corresponding config
 - setup A-MQ6 JDBC shared storage 

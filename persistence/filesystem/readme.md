@@ -1,6 +1,5 @@
 
-
-A-MQ 6
+##A-MQ 6 kahadb
 
 Creates a broker using kahadb. Uses many of the available configuration options for kahadb.
 
@@ -20,12 +19,12 @@ start a producer
 
 Consumer receives 1000 message - OK
 
-
-TODO
-- create an corresponding A-MQ7 config
-
-
-Questions:
+##Questions:
 
 - does A-MQ7 offer something similar to mkahadb
 - what file systems (particularly network shared filesystems) is A-MQ7 supported on?
+
+##TODO
+- create an corresponding A-MQ7 config
+
+
