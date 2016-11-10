@@ -40,8 +40,14 @@ edited the broker.xml of each broker to point at the same shared store
 
 
 ## Questions: 
-- is it mandiatory to have a  cluster defined do do master/slave with shared storage
+- is it mandiatory to have a  cluster defined do do master/slave with shared storage?
+Andy Taylor has confirmed you need to have a cluster setup for this to function correcly
+
+
 - does it use a filesystem lock as well or will it just reply on the cluster 
+It relies on filesystem locks. It uses the cluster for anouncing backup availablity
+
+
 - what happens if there is a physical network failure between broker1 and broker2
 
 ##Notes: 
