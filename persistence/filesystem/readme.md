@@ -91,15 +91,14 @@ When consumer is finished, check journal directory/number of file size
 Result:
 
 1) Observed that store journals only grew to approx 110MB. 
-Then the PAGING store appeared to grow. 
-TODO: Check with Andy Taylor if I have configured that correctly.
+Then the PAGING store appeared to grow - see Observation 1.
 
 2) With only ten messages in the broker the journal still seem to the 110 MB of disk used. The page directory appeared to only have one page left
 
 TODO Find the configuration that influces how many/how often store files are compacted/discarded. 
 **NOTE** I suspect there is a pooling journal mechanism/per allocation in play but need to research
 
-3) Even after the file have not been reduced 
+3) Even after all the messages have been consumd the file have not been reduced 
 
 
 TODO: What configuration is influencing number of journal files kept
@@ -117,7 +116,12 @@ Push 200 messagee into dest
 
 ##Observations:
 
+####1. Paging 
+Question: I noticed that  when PAGING kicked in, the NIO store did *not* grow but the paging store grew.  I kind of expected the messages to be written to the store and  before being paged out to disk.  Does the paging mechanism occur before the message are placed in the store?
+ATaylor: the messages are actually in the page store not the journal, only the reference is in the journal.  The page is written first then the reference to the journal and then a sync happens. If the page is updated but the reference fails the messsgae is regarded as not delivered and ignored after any reload/failure. 
 
+Question: When more space becomes available in the journal store (after messages are consumed from the destination) will those paged message get pulled in from the page file and written to the journal store?
+ATaylor: Nope, just read into memory and  the reference is acked when consumed and the page record deleted. Its just references that are important, messages can be in the journal, in paging or in a large message store
 
 
 ##Questions:
