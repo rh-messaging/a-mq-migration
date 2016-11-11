@@ -41,14 +41,14 @@ edited the broker.xml of each broker to point at the same shared store
 
 ## Questions: 
 - is it mandiatory to have a  cluster defined do do master/slave with shared storage?
-Andy Taylor has confirmed you need to have a cluster setup for this to function correcly
-
+ATaylor: yes, it uses this to find a connection to its live and for its backup announcement. It is not possible just to have A-MQ 7 competing for a lock on a file like in A-MQ6.
 
 - does it use a filesystem lock as well or will it just reply on the cluster 
-It relies on filesystem locks. It uses the cluster for anouncing backup availablity
+ENG: Backup server will actively try to lock the store and when it does it will start (this is the same as in the 5.x). The cluster here is used to announce backup connectors for clients and events like master is back. 
 
 
 - what happens if there is a physical network failure between broker1 and broker2
+its fine, it will either already have announced its location or will when it reconnects and repeat. 
 
 ##Notes: 
 - failover-on-shutdown - need to highlight as that is different behaviour to A-MQ 6 share storage, master/slave
