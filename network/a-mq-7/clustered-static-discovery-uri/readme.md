@@ -69,8 +69,51 @@ consume 500 messages from broker1
 	java -jar /opt/a-mq-6/activemq-all.jar consumer --brokerUrl 'tcp://localhost:61616' --user admin --password admin --destination TEST
 
 
+Result: Messages where consumed as expected and 500 available on each broker.
+
+NOTE: messages will not be available anymore in broker1   
+
+
+### Test 2
+
+- changed messageLoadBalancingType=ON_DEMAND
+- added <redistribution-delay>0</redistribution-delay>
+
+Send 1000 messages to broker1
+
+	java -jar /opt/a-mq-6/activemq-all.jar producer --brokerUrl 'tcp://localhost:61616' --user admin --password admin --destination TEST
+
+Consumed 100 messages from broker2
+   
+	java -jar /opt/a-mq-6/activemq-all.jar consumer --brokerUrl 'tcp://localhost:61716' --user admin --password admin --destination TEST --messageCount 100
+   
+
+Consumed 100 messages from broker1
+    
+	java -jar /opt/a-mq-6/activemq-all.jar consumer --brokerUrl 'tcp://localhost:61616' --user admin --password admin --destination TEST --messageCount 100
+
+
+Consumed 100 messages from broker2
+    
+	java -jar /opt/a-mq-6/activemq-all.jar consumer --brokerUrl 'tcp://localhost:61716' --user admin --password admin --destination TEST --messageCount 100
+
+
+result: messages consumed from both brokers, interleaved. 700 messages let sitting on broker2 (this is the last broker consumerd rome) 
+
+
+Note: observed in the JMX that ALL the remaining messages would be pushed across the network to the broker with the consumer. This resulted in a messages travelling back and forth when a consumer would attach and then disconnect,  
+
+
+####NOTES
+
+- according to docs redistribution delay only works when messageLoadBalancingType=ON_DEMAND. The redistribution will only take effect when no consumers are available on the queue.  This is similiar to the A-MQ6 replaywhennoconsumer allowing the messages to go back to the original broker if no consumers. However in A-MQ 6 it there are consumers 
+on another a different broker(not source broker) they will get some of the message. If the A-MQ7 docs are correct they will not get redistributed in the network until no consumers - this is a slight difference in message distribution.
+ 
+ 
+
+
+
 #### TODO
 
-- look at DEMAND strategy
-- look at REDISTRIBUTION approach
 - find out recommendations for maxhops and redistribution values
+- is there a way to throttle/limit the number of messages passed between the brokers in the network.
