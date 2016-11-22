@@ -297,3 +297,9 @@ NOTE: to to rerun later - the 1 missing message may be an issue in the test case
 
 
 ##Questions
+
+- at the moment broker1_master points to broker2_master to form the network between the pairs. Would it be better for broker1_master to have a static connection to broker2_master & broker2_slave and vice-versa for broker2_master -> broker1_master and broker1_slave
+
+- should the slave brokers have knowledge of the other side of the network
+
+
