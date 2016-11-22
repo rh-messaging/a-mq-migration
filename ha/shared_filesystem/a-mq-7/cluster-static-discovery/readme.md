@@ -167,3 +167,27 @@ broker1_master reported
 
 
 RESULT: Broker1_slave detected broker1_master restart and went back to slave. Broker1_master became active.
+
+### Test 3
+
+AIM: push 100,000 messages through a single destination and ensure A-MQ 6 failover will reconnect (both client and consumer side) and no messages are lost.
+
+started broker1_master
+
+started broker1_slave
+
+start consumer client 
+
+	java -jar /opt/a-mq-6/activemq-all.jar consumer --brokerUrl 'failover:(tcp://localhost:61616,tcp://localhost:61716)' --user admin --password admin --destination TEST --messageCount 100000
+
+start producer client 
+
+	java -jar /opt/a-mq-6/activemq-all.jar  producer --brokerUrl 'failover:(tcp://localhost:61616,tcp://localhost:61716)' --user admin --password admin --destination TEST --messageCount 100000
+	
+kill broker1_master after 20,000
+
+RESULT:
+
+- broker1_slave became live
+- Consumer and producer reconnected without manual intervention
+- all 100,000 messages reported received on the consumer
