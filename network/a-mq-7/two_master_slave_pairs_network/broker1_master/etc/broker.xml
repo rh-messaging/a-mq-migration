@@ -96,6 +96,7 @@ under the License.
 		 
 		 <!-- connection to broker2 pair-->
 		  <connector name="broker2-master">tcp://localhost:61816</connector>
+		  <connector name="broker2-slave">tcp://localhost:61916</connector>
 		  
       </connectors>
 	  
@@ -111,6 +112,7 @@ under the License.
             <static-connectors>
                <connector-ref>broker1-slave</connector-ref>
 			   <connector-ref>broker2-master</connector-ref>
+			    <connector-ref>broker2-slave</connector-ref>
             </static-connectors>
          </cluster-connection>
       </cluster-connections>

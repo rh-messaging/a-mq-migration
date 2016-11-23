@@ -37,6 +37,7 @@ modified config to
 		 
 		 <!-- connection to broker2 pair-->
 		  <connector name="broker2-master">tcp://localhost:61816</connector>
+		  <connector name="broker2-slave">tcp://localhost:61916</connector>
 		  
       </connectors>
 	  
@@ -52,6 +53,7 @@ modified config to
             <static-connectors>
                <connector-ref>broker1-slave</connector-ref>
 			   <connector-ref>broker2-master</connector-ref>
+			    <connector-ref>broker2-slave</connector-ref>
             </static-connectors>
          </cluster-connection>
       </cluster-connections>
@@ -63,8 +65,7 @@ modified config to
 	           </master>
 	        </shared-store>
 	  </ha-policy>
-
-
+	  
 
 ###broker1_slave
 
@@ -83,7 +84,7 @@ modifed config as follows
          <connector name="netty-connector">tcp://localhost:61716</connector>
          <!-- connector to the broker1 -->
          <connector name="broker1-master">tcp://localhost:61616</connector>
-		
+		  <connector name="broker2-slave">tcp://localhost:61916</connector>
       </connectors>
 	  
 	  
@@ -97,6 +98,7 @@ modifed config as follows
             <max-hops>1</max-hops>
             <static-connectors>
                <connector-ref>broker1-master</connector-ref>
+			   <connector-ref>broker2-slave</connector-ref>
             </static-connectors>
          </cluster-connection>
       </cluster-connections>
@@ -130,6 +132,7 @@ Modified config as follows
 		 
 		 <!-- connector to broker1 pair-->
 		 <connector name="broker1-master">tcp://localhost:61616</connector>
+		  <connector name="broker1-slave">tcp://localhost:61716</connector>
 		 
       </connectors>
 	  
@@ -145,6 +148,7 @@ Modified config as follows
             <static-connectors>
                <connector-ref>broker2-slave</connector-ref>
 			   <connector-ref>broker1-master</connector-ref>
+			   <connector-ref>broker1-slave</connector-ref>
             </static-connectors>
          </cluster-connection>
       </cluster-connections>
@@ -157,6 +161,7 @@ Modified config as follows
 	           </master>
 	        </shared-store>
 	  </ha-policy>
+
 	  
 
 ### broker2_slave
@@ -176,6 +181,7 @@ modified config as follows:
          <connector name="netty-connector">tcp://localhost:61916</connector>
          <!-- connector to the broker1 -->
          <connector name="broker2-master">tcp://localhost:61816</connector>
+		  <connector name="broker1-slave">tcp://localhost:61716</connector>
       </connectors>
 	  
 	  
@@ -189,6 +195,7 @@ modified config as follows:
             <max-hops>1</max-hops>
             <static-connectors>
                <connector-ref>broker2-master</connector-ref>
+			   <connector-ref>broker1-slave</connector-ref>
             </static-connectors>
          </cluster-connection>
       </cluster-connections>
@@ -202,6 +209,11 @@ modified config as follows:
          </shared-store>
       </ha-policy>
 
+
+####NOTE 1
+I intially tried with a single connection between broker1 pair and broker2 pair . Broker1_master was configured to connect to broker2_master, broker2_master was configured to connect to broker1_master.
+However if broker1_slave and broker2_slave were brought up first and broker1_master and broker2_master were not started (test 5) the network between broker1 pair and broker2 pair would not be established. 
+Interesting Side note regarding that config; if broker1_master and broker2_master where started and then failed over their appropriate masters; the newtwork seemed to be already established and worked.
 
 
 ##Test
@@ -303,8 +315,25 @@ Actually the slave brokers will not start until the master broker has been start
 
 "09:09:48,579 INFO  [org.apache.activemq.artemis.core.server] AMQ221109: Apache ActiveMQ Artemis Backup Server version 1.3.0.amq-700005-redhat-1 [33a688bf-b154-11e6-9d07-3c07540d37d0] started, waiting live to fail before it gets active"
 
-TODO: Need to verify if this is configurable behaviour. If the slave brokers can be configure to start first, we may need to add additional static network connectors so all brokers know about the backups. 
+Once the master has been started once and shutdown then the slave can be started alone and go live.
 
+STEPS:
+
+started broker1_slave
+
+started broker2_slave
+
+NOTE: broker1_master and broker2_master are NOT started.
+
+started consumer on broker2_slave
+
+	java -jar /opt/a-mq-6/activemq-all.jar  consumer --brokerUrl 'failover:(tcp://localhost:61816,tcp://localhost:61916)' --user admin --password admin --destination TEST --messageCount 100
+
+started producer on broker1_slave
+
+	java -jar /opt/a-mq-6/activemq-all.jar  producer --brokerUrl 'failover:(tcp://localhost:61616,tcp://localhost:61716)' --user admin --password admin --destination TEST --messageCount 100
+
+RESULT: 100 messages were pushed across the network from broker1_slave to broker2_master
 
 
 

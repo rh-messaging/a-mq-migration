@@ -95,7 +95,7 @@ under the License.
          <connector name="netty-connector">tcp://localhost:61716</connector>
          <!-- connector to the broker1 -->
          <connector name="broker1-master">tcp://localhost:61616</connector>
-		
+		  <connector name="broker2-slave">tcp://localhost:61916</connector>
       </connectors>
 	  
 	  
@@ -109,6 +109,7 @@ under the License.
             <max-hops>1</max-hops>
             <static-connectors>
                <connector-ref>broker1-master</connector-ref>
+			   <connector-ref>broker2-slave</connector-ref>
             </static-connectors>
          </cluster-connection>
       </cluster-connections>
