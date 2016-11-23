@@ -295,6 +295,20 @@ NOTE: to to rerun later - the 1 missing message may be an issue in the test case
 
 
 
+###Test 5
+
+AIM: Start broker_1Slave and broker2_Slave and ensure network is still operational
+
+Actually the slave brokers will not start until the master broker has been started first. The slave broker reports 
+
+"09:09:48,579 INFO  [org.apache.activemq.artemis.core.server] AMQ221109: Apache ActiveMQ Artemis Backup Server version 1.3.0.amq-700005-redhat-1 [33a688bf-b154-11e6-9d07-3c07540d37d0] started, waiting live to fail before it gets active"
+
+TODO: Need to verify if this is configurable behaviour. If the slave brokers can be configure to start first, we may need to add additional static network connectors so all brokers know about the backups. 
+
+
+
+
+
 
 ##Questions
 
