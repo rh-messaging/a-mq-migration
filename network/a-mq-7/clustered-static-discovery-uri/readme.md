@@ -77,7 +77,7 @@ NOTE: messages will not be available anymore in broker1
 ### Test 2
 
 - changed messageLoadBalancingType=ON_DEMAND
-- added <redistribution-delay>0</redistribution-delay>
+- added "redistribution-delay" to 0
 
 Send 1000 messages to broker1
 
